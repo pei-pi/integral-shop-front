@@ -2,6 +2,7 @@
   <el-card shadow="always" class="card">
     <div slot="header" class="clearfix">
       <span class="text">登录</span>
+      <router-link to="/register">注册</router-link>
     </div>
     <el-form
       :model="ruleForm"
@@ -21,13 +22,7 @@
           autocomplete="off"
         ></el-input>
       </el-form-item>
-      <el-form-item label="确认密码" prop="checkPassword">
-        <el-input
-          type="password"
-          v-model="ruleForm.checkPassword"
-          autocomplete="off"
-        ></el-input>
-      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')"
           >登录</el-button
@@ -44,8 +39,8 @@ export default {
       var regEmail = /^[A-Za-z0-9\u4e00]+@[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)+$/;
       if (this.ruleForm.email != "" && !regEmail.test(this.ruleForm.email)) {
         callback(new Error("邮箱格式不正确"));
-      }else{
-        callback()
+      } else {
+        callback();
       }
     };
     var validatePass = (rule, value, callback) => {
@@ -58,62 +53,45 @@ export default {
         callback();
       }
     };
-    var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.ruleForm.password) {
-        callback(new Error("两次输入密码不一致!"));
-      } else {
-        callback();
-      }
-    };
+
     return {
       ruleForm: {
         email: "",
-        name: "",
         password: "",
-        checkPass: "",
       },
       rules: {
         email: [
-          { required:true,message: "请输入邮箱", trigger: "blur" },
+          { required: true, message: "请输入邮箱", trigger: "blur" },
           { validator: checkEmail, trigger: "blur" },
         ],
-        name: [
-          { required: true, message: "请输入姓名", trigger: "blur" },
-          { min: 3, max: 6, message: "长度在 3 到 6 个字符", trigger: "blur" },
-        ],
-        password: [
-          { validator: validatePass, trigger: "blur" },
-          {
-            required: true,min: 6,max: 12, message: "长度在 6 到 12 个字符",trigger: "blur",
-          },
-        ],
-        checkPassword: [
-          { required: true, validator: validatePass2, trigger: "blur" },
-        ],
+        password: [{ required: true ,message:"请输入密码" ,trigger:"blur"}],
       },
     };
   },
   methods: {
     submitForm(formName) {
-       this.$refs[formName].validate((valid) => {
-       if (valid) {
-      this.$axios.post("/api/users/register", this.ruleForm)
-      .then((res) => {
-        this.$message({
-          message:'注册成功！',
-          type:'success'
-        })
-        this.$router.push('/login')
-      })
-       .catch(err=>{
-        if(err.response.status == 400){
-          this.$message.error('该邮箱已被注册')
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$axios
+            .post("/api/users/login", this.ruleForm)
+            .then((res) => {
+              this.$message({
+                message: "登录成功",
+                type: "success",
+              });
+              //console.log(res.data.token)
+              sessionStorage.setItem("token", res.data.token);
+              this.$router.push("/home");
+            })
+            .catch((err) => {
+              if (err.response.status == 404) {
+                this.$message.error("用户不存在");
+              } else if (err.response.status == 400) {
+                this.$message.error("密码错误！");
+              }
+            });
         }
-       });
-         }
-       });
+      });
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -122,6 +100,15 @@ export default {
 };
 </script>
 <style scoped>
+.clearfix{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.clearfix a{
+  color: orange ;
+}
+
 .el-card {
   width: 40%;
   position: absolute;

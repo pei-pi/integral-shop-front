@@ -2,6 +2,7 @@
   <el-card shadow="always" class="card">
     <div slot="header" class="clearfix">
       <span class="text">注册</span>
+      <router-link to="/login">登录</router-link>
     </div>
     <el-form
       :model="ruleForm"
@@ -47,8 +48,8 @@ export default {
       var regEmail = /^[A-Za-z0-9\u4e00]+@[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)+$/;
       if (this.ruleForm.email != "" && !regEmail.test(this.ruleForm.email)) {
         callback(new Error("邮箱格式不正确"));
-      }else{
-        callback()
+      } else {
+        callback();
       }
     };
     var validatePass = (rule, value, callback) => {
@@ -79,7 +80,7 @@ export default {
       },
       rules: {
         email: [
-          { required:true,message: "请输入邮箱", trigger: "blur" },
+          { required: true, message: "请输入邮箱", trigger: "blur" },
           { validator: checkEmail, trigger: "blur" },
         ],
         name: [
@@ -89,7 +90,11 @@ export default {
         password: [
           { validator: validatePass, trigger: "blur" },
           {
-            required: true,min: 6,max: 12, message: "长度在 6 到 12 个字符",trigger: "blur",
+            required: true,
+            min: 6,
+            max: 12,
+            message: "长度在 6 到 12 个字符",
+            trigger: "blur",
           },
         ],
         checkPassword: [
@@ -100,23 +105,24 @@ export default {
   },
   methods: {
     submitForm(formName) {
-       this.$refs[formName].validate((valid) => {
-       if (valid) {
-      this.$axios.post("/api/users/register", this.ruleForm)
-      .then((res) => {
-        this.$message({
-          message:'注册成功！',
-          type:'success'
-        })
-        this.$router.push('/login')
-      })
-       .catch(err=>{
-        if(err.response.status == 400){
-          this.$message.error('该邮箱已被注册')
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$axios
+            .post("/api/users/register", this.ruleForm)
+            .then((res) => {
+              this.$message({
+                message: "注册成功！",
+                type: "success",
+              });
+              this.$router.push("/login");
+            })
+            .catch((err) => {
+              if (err.response.status == 400) {
+                this.$message.error("该邮箱已被注册");
+              }
+            });
         }
-       });
-         }
-       });
+      });
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -125,6 +131,14 @@ export default {
 };
 </script>
 <style scoped>
+.clearfix {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.clearfix a {
+  color: orange;
+}
 .el-card {
   width: 40%;
   position: absolute;
