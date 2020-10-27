@@ -1,11 +1,24 @@
 <template>
   <div>
     <home_nav></home_nav>
-    <div class="container">
-      <div class="main">
-        <el-row :gutter="20">
-          <el-col :span="4"></el-col>
-          <el-col :span="12"></el-col>
+    <div class="main">
+      <div class="container">
+        <el-row>
+          <el-col :span="5">
+            <el-menu
+              active-text-color="#ffd04b"
+              :default-active="this.$route.path"
+              router
+            >
+              <el-menu-item v-for="(item,i) in list" :key="i" :index="item.name">
+                <span slot="title">{{item.listname}}</span>
+              </el-menu-item>
+             
+            </el-menu>
+          </el-col>
+          <el-col :span="18" class="rcol">
+            <router-view></router-view>
+          </el-col>
         </el-row>
       </div>
     </div>
@@ -13,53 +26,44 @@
   </div>
 </template>
 <script>
-import home_nav from '../../components/nav'
-import home_footer from '../../components/footer'
+import home_nav from "../../components/nav";
+import home_footer from "../../components/footer";
 export default {
-  components:{
+  components: {
     home_nav,
-    home_footer
+    home_footer,
   },
   data() {
-    return {
-      token: sessionStorage.getItem("token"),
-      user: {
-        username: "",
-        email: "",
-        integral: "",
-      },
+    return {     
+      list:[
+        {name:'/center',listname:'账户中心'},
+        {name:'/order',listname:'我的订单'},
+        {name:'/keep',listname:'我的收藏'},
+        {name:'/integral',listname:'积分查询'},
+      ]
     };
-  },
-  created: function () {
-    this.getUser();
-  },
-  methods: {
-    getUser() {
-      this.$axios
-        .get("/api/users/current", {
-          headers: { Authorization: this.token },
-        })
-        .then((res) => {
-          console.log(res.data);
-          (this.user.username = res.data.name),
-            (this.user.email = res.data.email),
-            (this.user.integral = res.data.integral);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
   },
 };
 </script>
 <style scoped>
-.container{
-  width: 100%;
-  background-color:  #f4f3f3;
-  height: 100vh;
-}
 .main{
-  width:85%;
-
+  background-color:  #f4f3f3;
 }
+.container {
+  width: 85%;
+  margin: 0 auto;
+}
+.el-row {
+  padding-top: 20px;
+}
+.rcol{
+  background-color: white;
+  margin-left: 30px;
+}
+.el-menu{
+  height: 400px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
 </style>

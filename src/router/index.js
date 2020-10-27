@@ -10,6 +10,10 @@ import manage from '../views/manage'
 import userManage from '../components/manage/user-manage'
 import goodsManage from '../components/manage/goods-manage'
 import orderManage from '../components/manage/order-manage'
+import userCenter from '../components/user-center/center'
+import userOrder from '../components/user-center/order'
+import userKeep from '../components/user-center/keep'
+import userIntegral from '../components/user-center/integral'
 
 Vue.use(Router)
 
@@ -39,7 +43,33 @@ Vue.use(Router)
         {
             path: "/user-center",
             name: "user-center",
-            component: User
+            component: User,
+            children:[
+                {
+                    path:'/user-center',
+                    redirect:"/center"
+                },
+                {
+                    path:"/center",
+                    name:"center",
+                    component:userCenter
+                },
+                {
+                    path:"/integral",
+                    name:"integral",
+                    component:userIntegral
+                },
+                {
+                    path:"/keep",
+                    name:"keep",
+                    component:userKeep
+                },
+                {
+                    path:"/order",
+                    name:"order",
+                    component:userOrder
+                },
+            ]
         },
         {
             path: "/details/:index",
