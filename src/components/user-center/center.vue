@@ -3,17 +3,17 @@
     <div class="rows1">
       <img src="../../assets/head.png" width="80px" height="80px" />
       <div class="columns">
-        <span class="name">{{user.username}}</span>
-        <span class="email">邮箱：{{user.email}}</span>
+        <span class="name">{{ user.username }}</span>
+        <span class="email">邮箱：{{ user.email }}</span>
       </div>
     </div>
     <div class="rows2">
-        <img src="../../assets/integral.png" width="80px" height="80px">
-        <div class="integral">
-            <span>当前可用积分</span>
-            <span>{{user.integral}}</span>
-        </div>  
-    </div>  
+      <img src="../../assets/integral.png" width="80px" height="80px" />
+      <div class="integral">
+        <span>当前可用积分</span>
+        <span>{{ user.integral }}</span>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -40,10 +40,9 @@ export default {
           headers: { Authorization: this.token },
         })
         .then((res) => {
-          console.log(res.data);
-          (this.user.username = res.data.name),
-            (this.user.email = res.data.email),
-            (this.user.integral = res.data.integral);
+          this.user.username = res.data.name;
+          this.user.email = res.data.email;
+          this.user.integral = res.data.integral;
         })
         .catch((err) => {
           console.log(err);
@@ -81,7 +80,7 @@ export default {
   padding-top: 12px;
 }
 .integral {
-    padding-left: 10px;
+  padding-left: 10px;
   padding-top: 10px;
   display: flex;
   flex-direction: column;

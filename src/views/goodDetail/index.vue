@@ -50,8 +50,7 @@ export default {
     home_footer,
   },
   created() {
-    this.getgood(), 
-    this.getUser();
+    this.getgood(), this.getUser();
   },
   data() {
     return {
@@ -61,8 +60,8 @@ export default {
       token: sessionStorage.getItem("token"),
       user: {
         integral: "",
-        id:"",
-        email:""
+        id: "",
+        email: "",
       },
     };
   },
@@ -76,6 +75,7 @@ export default {
           params: { id },
         })
         .then((res) => {
+          console.log(res.data.data[0]);
           this.good = res.data.data[0];
         })
         .catch((err) => {
@@ -90,41 +90,47 @@ export default {
           headers: { Authorization: this.token },
         })
         .then((res) => {
-          this.user.id = res.data.id
+          this.user.id = res.data.id;
           this.user.integral = res.data.integral;
-          this.user.email = res.data.email
+          this.user.email = res.data.email;
         })
         .catch((err) => {
           console.log(err);
         });
     },
     exchange() {
-        
-        if(this.user.integral > this.good.integral*this.num){
-             const integral = this.user.integral - this.good.integral*this.num
-             const count = this.good.count - this.num;  
-            const email = this.user.email
-            const _id = this.good._id
-            this.$axios.post("/api/goods/exchange",{
+      if (this.user.integral > this.good.integral * this.num) {
+        const name = this.good.name;
+        const integral = this.user.integral - this.good.integral * this.num;
+        const count = this.good.count - this.num;
+        const address = this.good.address;
+        const email = this.user.email;
+        const _id = this.good._id;
+        const num = this.num
+        this.$axios
+          .post("/api/goods/exchange", {
             integral,
             count,
             email,
-            _id
-        }).then((res)=>{
-            if(res.status == 200){
-                this.$message({
-                    message:"兑换成功",
-                    type:"success"
-                })
-                this.getgood()
-                this.getUser()
+            _id,
+            address,
+            name,
+            num
+          })
+          .then((res) => {
+            if (res.status == 200) {
+              this.$message({
+                message: "兑换成功",
+                type: "success",
+              });
+              this.getgood();
+              this.getUser();
             }
-        })
-        }else{
-            this.$message.error("积分不足")
-            return
-        }
-        
+          });
+      } else {
+        this.$message.error("积分不足");
+        return;
+      }
     },
   },
 };
